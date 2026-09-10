@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:playground_counter/database/app_database.dart';
 
+import 'visitor_recognition_page.dart';
+
 import '../models/visit.dart';
 
 class DashboardPage extends StatefulWidget {
@@ -378,7 +380,16 @@ class _DashboardPageState extends State<DashboardPage> {
       ),
 
       floatingActionButton: FloatingActionButton(
-        onPressed: isToday ? _showAddVisitDialog : null,
+        onPressed: isToday
+            ? () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (_) => const VisitorRecognitionPage(),
+                  ),
+                );
+              }
+            : null,
         child: const Icon(Icons.add),
       ),
     );

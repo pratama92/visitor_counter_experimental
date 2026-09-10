@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'pages/dashboard_page.dart';
 import 'pages/monthly_page.dart';
 import 'pages/settings_page.dart';
-import 'pages/visitor_recognition_page.dart';
 
 void main() {
   runApp(const PlaygroundCounterApp());
@@ -32,7 +31,7 @@ class MainPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 4,
+      length: 3,
       child: Scaffold(
         appBar: AppBar(
           title: const Text('Playground Counter'),
@@ -40,18 +39,12 @@ class MainPage extends StatelessWidget {
             tabs: [
               Tab(icon: Icon(Icons.dashboard), text: 'Dashboard'),
               Tab(icon: Icon(Icons.bar_chart), text: 'Monthly'),
-              Tab(icon: Icon(Icons.camera_alt), text: 'Visitor'),
               Tab(icon: Icon(Icons.settings), text: 'Settings'),
             ],
           ),
         ),
         body: const TabBarView(
-          children: [
-            DashboardPage(),
-            MonthlyPage(),
-            VisitorRecognitionPage(),
-            SettingsPage(),
-          ],
+          children: [DashboardPage(), MonthlyPage(), SettingsPage()],
         ),
       ),
     );

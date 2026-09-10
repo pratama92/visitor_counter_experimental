@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:path/path.dart';
 import 'package:sqflite/sqflite.dart';
 
@@ -209,5 +211,42 @@ class AppDatabase {
       'session_time': sessionTime,
       'session_cost': sessionCost,
     }, conflictAlgorithm: ConflictAlgorithm.replace);
+  }
+
+  Future<int> insertFaceSample({
+    required int visitorId,
+    required List<double> embedding,
+  }) async {
+    final db = await database;
+
+    return db.insert('face_samples', {
+      'visitor_id': visitorId,
+      'embedding': jsonEncode(embedding),
+      'created_at': DateTime.now().toIso8601String(),
+    });
+  }
+
+  Future<int> insertVisitor({required String name}) async {
+    final db = await database;
+
+    return db.insert('visitors', {
+      'name': name,
+      'created_at': DateTime.now().toIso8601String(),
+    });
+  }
+
+  Future<List<Map<String, dynamic>>> getFaceSamplesWithVisitors() async {
+    final db = await database;
+
+    return db.rawQuery('''
+    SELECT
+      face_samples.id AS face_sample_id,
+      face_samples.visitor_id,
+      face_samples.embedding,
+      visitors.name
+    FROM face_samples
+    INNER JOIN visitors
+      ON visitors.id = face_samples.visitor_id
+  ''');
   }
 }
