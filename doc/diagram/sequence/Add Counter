@@ -1,48 +1,100 @@
-Playground Counter — V1
+# Visitor Counter — Visit / Face Recognition
 
-Operator        Flutter UI        App Logic        SQLite
-   │                │                │               │
-   │ Open App       │                │               │
-   ├───────────────>│                │               │
-   │                │ Load Today     │               │
-   │                ├───────────────>│               │
-   │                │                │ Get Visits    │
-   │                │                ├──────────────>│
-   │                │                │<──────────────┤
-   │                │<───────────────┤               │
-   │<───────────────┤                │               │
-   │   Show Daily Dashboard           │               │
-   │                │                │               │
-   │ Tap Add Visit  │                │               │
-   ├───────────────>│                │               │
-   │                │ Show Dialog    │               │
-   │<───────────────┤                │               │
-   │ Enter Counter  │                │               │
-   │ + Start        │                │               │
-   ├───────────────>│                │               │
-   │                │ Create Visit   │               │
-   │                ├───────────────>│               │
-   │                │                │ Get Settings  │
-   │                │                ├──────────────>│
-   │                │                │<──────────────┤
-   │                │                │               │
-   │                │                │ Calculate      │
-   │                │                │ End Time       │
-   │                │                │               │
-   │                │                │ Insert Visit   │
-   │                │                ├──────────────>│
-   │                │                │<──────────────┤
-   │                │<───────────────┤               │
-   │<───────────────┤                │               │
-   │   Show New Visit                │               │
-   │                │                │               │
-   │ View History   │                │               │
-   ├───────────────>│                │               │
-   │                │ Load History   │               │
-   │                ├───────────────>│               │
-   │                │                │ Get Visits    │
-   │                │                ├──────────────>│
-   │                │                │<──────────────┤
-   │                │<───────────────┤               │
-   │<───────────────┤                │               │
-   │   Show History                  │               │
+```text
+Operator        Flutter UI        Face Recognition        App Logic        SQLite
+   │                │                    │                   │                │
+   │ Open App       │                    │                   │                │
+   ├───────────────>│                    │                   │                │
+   │                │ Load Today         │                   │                │
+   │                ├───────────────────────────────────────>│                │
+   │                │                    │                   │ Get Visits     │
+   │                │                    │                   │───────────────>│
+   │                │                    │                   │<───────────────│
+   │                │<───────────────────────────────────────┤                │
+   │<───────────────┤                    │                   │                │
+   │ Show Dashboard │                    │                   │                │
+   │                │                    │                   │                │
+   │ Tap Add Visit  │                    │                   │                │
+   ├───────────────>│                    │                   │                │
+   │                │ Open Camera        │                   │                │
+   │                │───────────────────>│                   │                │
+   │                │                    │                   │                │
+   │                │                    │ Detect Face       │                │
+   │                │                    │                   │                │
+   │                │                    │ Create Embedding  │                │
+   │                │                    │                   │                │
+   │                │                    │ Compare Samples   │                │
+   │                │                    │───────────────┐   │                │
+   │                │                    │               │   │                │
+   │                │                    │<──────────────┘   │                │
+   │                │                    │                   │                │
+   │                │                    │ Match / No Match  │                │
+   │                │                    │──────────────────>│                │
+   │                │                    │                   │                │
+   │                │                    │                   │ Check Visitor  │
+   │                │                    │                   │ / Active Visit │
+   │                │                    │                   │───────────────>│
+   │                │                    │                   │<───────────────│
+   │                │                    │                   │                │
+   │                │                    │                   │                │
+   │                │                    │                   │ IF ACTIVE      │
+   │                │                    │                   │ VISIT EXISTS   │
+   │                │                    │                   │                │
+   │                │<───────────────────────────────────────┤                │
+   │<───────────────┤                    │                   │                │
+   │ Show Existing  │                    │                   │                │
+   │ Active Visit   │                    │                   │                │
+   │                │                    │                   │                │
+   │                │                    │                   │                │
+   │                │                    │                   │ IF NO ACTIVE   │
+   │                │                    │                   │ VISIT EXISTS   │
+   │                │                    │                   │                │
+   │                │                    │                   │ Get Settings   │
+   │                │                    │                   │───────────────>│
+   │                │                    │                   │<───────────────│
+   │                │                    │                   │                │
+   │                │                    │                   │ Calculate      │
+   │                │                    │                   │ End Time       │
+   │                │                    │                   │                │
+   │                │                    │                   │ Insert Visit   │
+   │                │                    │                   │───────────────>│
+   │                │                    │                   │<───────────────│
+   │                │                    │                   │                │
+   │                │<───────────────────────────────────────┤                │
+   │<───────────────┤                    │                   │                │
+   │ Show New Visit │                    │                   │                │
+   │                │                    │                   │                │
+```
+
+## Business Rule
+
+```text
+1 Face
+   │
+   ├── No active visit
+   │       ↓
+   │   Create 1 visit
+   │
+   └── Active visit exists
+           ↓
+       Do NOT create another visit
+```
+
+A visitor may have multiple historical visits, but **cannot have two visits whose active session periods overlap**.
+
+```text
+Visitor A
+
+Visit 1 ────────────────┐
+                        │
+                        │ NO SECOND VISIT
+                        │ DURING THIS PERIOD
+                        │
+                        └────────────────────
+
+After Visit 1 expires:
+
+Visit 2 ────────────────┐
+                        │
+                        └────────────────────
+```
