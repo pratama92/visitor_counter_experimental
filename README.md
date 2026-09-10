@@ -1,8 +1,26 @@
-# Playground Counter
+# Visitor Counter
 
-Playground Counter is a simple offline-first visitor counting and recognition application built with Flutter.
+Visitor Counter is a simple offline-first visitor counting and recognition application built with Flutter.
 
-The application helps playground staff record visits, recognize returning visitors, register new visitors, and track visitor activity through a simple and practical interface.
+The application is designed for small venues and real-world activities that need a practical way to record visits, recognize returning visitors, register new visitors, and track visitor activity.
+
+The implementation is intentionally general-purpose rather than being tied to a specific venue such as a playground.
+
+## Potential Use Cases
+
+Visitor Counter can potentially be used for:
+
+* Playgrounds
+* Swimming pools
+* Fishing ponds
+* Recreation areas
+* Tourist attractions
+* Weddings and private events
+* Seminars and workshops
+* Community events
+* Other small venues requiring simple visitor tracking
+
+The application focuses on common visitor-management requirements rather than venue-specific complexity.
 
 ## Features
 
@@ -11,12 +29,12 @@ The application helps playground staff record visits, recognize returning visito
 * Use configurable session duration and visit cost
 * Detect and recognize visitors using face recognition
 * Register new visitors with a face sample
-* Associate visitors with their visits
-* Select and view visits by date
+* Store visitor and face data locally
+* View visits by date
 * Display daily visitor totals
 * Mark visits as valid or invalid
 * Keep invalid records for historical tracking
-* Store application data locally for offline use
+* Operate without requiring an internet connection
 
 ## Technology
 
@@ -33,15 +51,19 @@ The application is intentionally kept simple and practical.
 
 The data model separates the **Visitor** from the **Visit**.
 
-A **Visitor** represents a person who can return multiple times.
+A **Visitor** represents a person who may visit multiple times.
 
-A **Visit** represents a single check-in session.
+A **Visit** represents an individual check-in session.
+
+The intended relationship is:
 
 ```text
 Visitor
    │
    └──< Visit
 ```
+
+Visitor-related data is kept separate from the original V1 visit records so that the existing V1 data structure can remain stable.
 
 Face recognition is used to identify an existing visitor or determine that a new visitor needs to be registered.
 
@@ -75,11 +97,23 @@ The current experimental V2 prototype has successfully demonstrated:
 * Face embedding generation using MobileFaceNet
 * Recognition of previously registered visitors
 * Registration of new visitors and face samples
-* Creation of a visit for a recognized visitor
 * Persistent storage of visitor and face data in SQLite
+* Creation of a visit for a recognized visitor
 * Basic real-device testing
 
-This milestone establishes the basic **face recognition → visitor → visit** workflow.
+This milestone establishes the basic:
+
+```text
+Face Recognition
+      ↓
+Visitor
+      ↓
+Visit
+```
+
+workflow.
+
+The current V2 prototype is intentionally stopped at this milestone while further testing can be performed.
 
 ## Future
 
@@ -87,27 +121,31 @@ Future development will focus on improving the reliability and practicality of t
 
 Possible future improvements include:
 
-* Preventing duplicate check-ins during an active session
+* Preventing duplicate check-ins while a visitor's current session is active
 * Completing the new visitor → first visit workflow
-* Linking visitors and visits more completely
-* Improving recognition reliability through additional testing
+* Completing visitor-to-visit relationship handling
+* Improving recognition reliability through real-world testing
 * Visitor history and management
-* Better handling of incorrect or duplicate face registrations
+* Handling incorrect or duplicate face registrations
 * Local network / multi-device support
 
 More advanced features will only be introduced when they provide clear practical value.
 
 ## Purpose
 
-This project is a practical Flutter application built around a real-world business workflow.
+Visitor Counter is a practical Flutter application built around a real-world visitor-management workflow.
 
-The focus is on:
+The implementation is intended to remain lightweight and adaptable across different small venues.
+
+The main focus is:
 
 * Simplicity
 * Offline-first operation
 * Minimal hardware requirements
 * Practical visitor management
+* Face-based visitor recognition
 * Incremental development
 * Maintainable implementation
+* Real-world usability
 
 The project will grow through real-world testing and small, validated improvements rather than unnecessary complexity.
